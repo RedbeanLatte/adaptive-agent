@@ -1,0 +1,19 @@
+.DS_Store
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+
+# local environment overrides (never commit secrets)
+.env
+.env.local
+.env.*.local
+
+# agent state (generated tools, catalog, traces)
+.agent_state/

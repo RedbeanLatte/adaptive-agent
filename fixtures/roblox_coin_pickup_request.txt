@@ -1,0 +1,10 @@
+Create a simple Roblox Luau coin pickup scaffold.
+
+Requirements:
+- Use a Part that players touch to collect a coin.
+- Connect the pickup logic through the Touched event.
+- Prevent duplicate collection from the same touch sequence.
+- Increase the player's leaderstats Coins value by 1.
+- Make the pickup Part disappear or disable itself after collection.
+- Keep the script short and easy to explain.
+- Output only one scaffold candidate.

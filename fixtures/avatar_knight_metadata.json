@@ -1,0 +1,22 @@
+{
+  "asset_name": "knight_avatar",
+  "rig_type": "R15",
+  "meshes": [
+    "knight_body.fbx",
+    "knight_helmet.fbx",
+    "knight_shoulders.fbx"
+  ],
+  "textures": [
+    "knight_body_albedo.png",
+    "knight_helmet_albedo.png"
+  ],
+  "accessories": [
+    "sword_back_attachment",
+    "cape_attachment"
+  ],
+  "notes": [
+    "helmet and shoulder armor use separate meshes",
+    "cape should preserve attachment alignment",
+    "verify naming consistency before auto-setup"
+  ]
+}

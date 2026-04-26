@@ -1,0 +1,15 @@
+Build a stylized lava cave material and texture prompt pack.
+
+Goal:
+- Generate 4 prompts for a stylized lava cave environment.
+- Each item should include:
+  - material name
+  - base prompt
+  - texture variation hint
+  - short usage note
+
+Visual direction:
+- vivid but readable
+- game-friendly stylized look
+- obsidian, lava cracks, ash, ember dust
+- avoid photorealistic wording

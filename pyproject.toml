@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adaptive_agent"
+version = "0.1.0"
+description = "Adaptive AI Agent CLI"
+requires-python = ">=3.11"
+dependencies = [
+    "prompt_toolkit>=3.0",
+    "requests>=2.31",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+adaptive-agent = "adaptive_agent.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
