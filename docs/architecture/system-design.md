@@ -127,7 +127,7 @@ sequenceDiagram
     participant CLI as CLI (Typer)
     participant RT as Runtime Loop
     participant LM as LLM Client
-    participant SB as Sandbox<br/>(subprocess + guard)
+    participant SB as Sandbox (subprocess + guard)
     participant RP as Replay (tempdir)
     participant AG as Approval Gate
     participant CT as Catalog
@@ -142,14 +142,14 @@ sequenceDiagram
     alt action = create_tool
         RT->>SB: execute(code, argv)
         SB-->>RT: stdout / stderr / exit
-        Note over SB: audit hook blocks writes<br/>outside workroot/.agent_state/.git
+        Note over SB: audit hook blocks writes outside workroot/.agent_state/.git
 
         alt 실행 성공
             RT->>RP: replay in isolated copy
             RP-->>RT: verification result
-            RT->>RT: pending_save 보관<br/>(answer 이후로 deferred)
+            RT->>RT: pending_save 보관 (answer 이후로 deferred)
         else 실패
-            RT->>LM: compact failure summary<br/>(repair, max 1회)
+            RT->>LM: compact failure summary (repair, max 1회)
             LM-->>RT: 수정된 code
             RT->>SB: execute (repair)
         end
@@ -163,7 +163,7 @@ sequenceDiagram
     AG-->>U: prompt
     U-->>AG: y
     AG->>CT: save_generated(spec)
-    CT-->>CT: tools/&lt;name&gt;/ 패키지 저장<br/>+ embedding 캐시
+    CT-->>CT: tools/{name}/ 패키지와 embedding 캐시 저장
     CT->>TR: event(saved_tool)
 ```
 
