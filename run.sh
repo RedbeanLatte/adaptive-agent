@@ -14,7 +14,7 @@ Usage:
   ./run.sh --test                   Run the no-network test suite
   ./run.sh --cli-help               Show the underlying CLI help
 
-By default this uses qwen3:30b via the configured Ollama Funnel endpoint.
+By default this uses qwen3.6:27b via the configured Ollama Funnel endpoint.
 EOF
 }
 

@@ -13,7 +13,7 @@ class LLMError(RuntimeError):
 
 
 _THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL | re.IGNORECASE)
-DEFAULT_MODEL = "qwen3:30b"
+DEFAULT_MODEL = "qwen3.6:27b"
 DEFAULT_BASE_URL = "https://ollama-wsl.tail71f338.ts.net:8443"
 
 

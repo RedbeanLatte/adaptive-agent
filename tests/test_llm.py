@@ -145,7 +145,7 @@ def test_config_ignores_env_local_from_current_directory(monkeypatch, tmp_path):
 
     cfg = LLMConfig.from_env()
 
-    assert cfg.model == "qwen3:30b"
+    assert cfg.model == "qwen3.6:27b"
     assert cfg.base_url == "https://ollama-wsl.tail71f338.ts.net:8443"
     assert cfg.token is None
     assert cfg.timeout == 120.0
@@ -184,7 +184,7 @@ def test_config_defaults(monkeypatch, tmp_path):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     monkeypatch.delenv("AGENT_HTTP_TIMEOUT", raising=False)
     cfg = LLMConfig.from_env()
-    assert cfg.model == "qwen3:30b"
+    assert cfg.model == "qwen3.6:27b"
     assert cfg.base_url == "https://ollama-wsl.tail71f338.ts.net:8443"
     assert cfg.token is None
     assert cfg.timeout == 120.0

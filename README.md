@@ -22,7 +22,7 @@
 
 ## LLM 설정
 
-기본값은 `src/adaptive_agent/llm.py` 안에 둔 Ollama endpoint와 chat model `qwen3:30b`, embedding model `nomic-embed-text` 를 사용합니다. `run.sh`는 재현성을 위해 `AGENT_MODEL`, `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `AGENT_HTTP_TIMEOUT`, `AGENT_ENV_FILE`, `AGENT_EMBEDDING_MODEL` 을 실행 환경에서 제거하고 코드의 기본값만 적용합니다.
+기본값은 `src/adaptive_agent/llm.py` 안에 둔 Ollama endpoint와 chat model `qwen3.6:27b`, embedding model `nomic-embed-text` 를 사용합니다. `run.sh`는 재현성을 위해 `AGENT_MODEL`, `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `AGENT_HTTP_TIMEOUT`, `AGENT_ENV_FILE`, `AGENT_EMBEDDING_MODEL` 을 실행 환경에서 제거하고 코드의 기본값만 적용합니다.
 
 다른 OpenAI-compatible endpoint나 모델을 쓰려면 `llm.py`의 `DEFAULT_BASE_URL` / `DEFAULT_MODEL`, `embeddings.py`의 `DEFAULT_EMBEDDING_MODEL` 을 직접 수정하거나, `run.sh`에서 위 환경변수 unset 부분을 제거한 뒤 직접 export 하면 됩니다.
 
@@ -67,6 +67,7 @@
 - sandbox는 Python 실행과 파일 쓰기 제한 중심이며, OS/container 수준 격리는 아닙니다.
 - 저장 도구 matching은 기본적으로 OpenAI-compatible `/v1/embeddings` 호출 기반 semantic matching을 먼저 시도하며, 실패하거나 적합한 후보가 없으면 token heuristic으로 fallback합니다. `AGENT_EMBEDDING_MODEL` 로 기본 embedding model을 override할 수 있습니다.
 - 시스템 프롬프트는 audit/checklist/scaffold 같은 구조화된 작업도 generated tool로 처리하도록 지시하지만, 모델에 따라 builtin read 후 직접 답변으로 끝낼 수 있습니다. trace의 action 시퀀스로 확인할 수 있습니다.
+- 긴 creative artifact는 generated tool stdout에 생성되더라도 최종 `answer`에서 요약만 노출될 수 있습니다. 이 프로젝트의 주요 검증 축은 tool 생성, replay 검증, 저장, 재사용 흐름입니다.
 - 사용자가 명시한 파일이 존재하지 않을 때 프롬프트는 `ask_user` 또는 부재 명시 답변을 강제하지만, 모델이 인접 파일로 대체하는 경우가 드물게 발생할 수 있습니다. tool observation의 `file not found` 메시지로 확인할 수 있습니다.
 - 향후에는 더 강한 실행 격리, tool 입출력 schema 검증, 모델별 prompt 튜닝, 실패 케이스별 repair 전략을 확장할 수 있습니다.
 
