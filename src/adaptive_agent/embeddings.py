@@ -11,9 +11,12 @@ class EmbeddingError(RuntimeError):
     """Raised for embedding provider failures."""
 
 
+DEFAULT_EMBEDDING_MODEL = "nomic-embed-text"
+
+
 @dataclass
 class EmbeddingConfig:
-    model: str = ""
+    model: str = DEFAULT_EMBEDDING_MODEL
     base_url: str = DEFAULT_BASE_URL
     token: str | None = None
     timeout: float = 120.0
@@ -25,7 +28,7 @@ class EmbeddingConfig:
     @classmethod
     def from_env(cls) -> "EmbeddingConfig":
         return cls(
-            model=_config_value("AGENT_EMBEDDING_MODEL", ""),
+            model=_config_value("AGENT_EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL),
             base_url=_config_value("OPENAI_BASE_URL", DEFAULT_BASE_URL),
             token=_config_value("OPENAI_API_KEY", "") or None,
             timeout=float(_config_value("AGENT_HTTP_TIMEOUT", "120")),
@@ -44,7 +47,7 @@ class EmbeddingClient:
 
     def embed(self, text: str) -> list[float]:
         if not self.config.enabled:
-            raise EmbeddingError("embedding disabled: AGENT_EMBEDDING_MODEL is not set")
+            raise EmbeddingError("embedding disabled: embedding model is not set")
 
         url = self.config.base_url.rstrip("/") + "/v1/embeddings"
         headers = {"Content-Type": "application/json"}

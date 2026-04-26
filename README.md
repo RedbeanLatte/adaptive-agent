@@ -22,9 +22,9 @@
 
 ## LLM 설정
 
-기본값은 `src/adaptive_agent/llm.py` 안에 둔 Ollama endpoint를 사용합니다. `run.sh`는 재현성을 위해 `AGENT_MODEL`, `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `AGENT_HTTP_TIMEOUT`, `AGENT_ENV_FILE`, `AGENT_EMBEDDING_MODEL` 을 실행 환경에서 제거하고 코드의 기본값만 적용합니다.
+기본값은 `src/adaptive_agent/llm.py` 안에 둔 Ollama endpoint와 chat model `qwen3:30b`, embedding model `nomic-embed-text` 를 사용합니다. `run.sh`는 재현성을 위해 `AGENT_MODEL`, `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `AGENT_HTTP_TIMEOUT`, `AGENT_ENV_FILE`, `AGENT_EMBEDDING_MODEL` 을 실행 환경에서 제거하고 코드의 기본값만 적용합니다.
 
-다른 OpenAI-compatible endpoint를 쓰려면 `llm.py`의 `DEFAULT_BASE_URL` / `DEFAULT_MODEL` 을 직접 수정하거나, `run.sh`에서 위 환경변수 unset 부분을 제거한 뒤 직접 export 하면 됩니다.
+다른 OpenAI-compatible endpoint나 모델을 쓰려면 `llm.py`의 `DEFAULT_BASE_URL` / `DEFAULT_MODEL`, `embeddings.py`의 `DEFAULT_EMBEDDING_MODEL` 을 직접 수정하거나, `run.sh`에서 위 환경변수 unset 부분을 제거한 뒤 직접 export 하면 됩니다.
 
 ## REPL 명령
 
@@ -45,7 +45,7 @@
 - 런타임이 action을 검증한 뒤 built-in tool 실행, saved tool 재사용, generated tool 생성·실행 중 하나를 수행합니다.
 - generated/saved tool은 subprocess에서 실행되며, Python audit-hook guard로 workroot 밖 쓰기와 `.agent_state` / `.git` 쓰기가 차단됩니다.
 - 성공한 generated tool은 임시 workspace에서 같은 `example_args`로 1회 replay 검증을 마친 뒤, 사용자 승인(`y/n`)을 받은 경우에만 `.agent_state/tools/<name>/` 에 저장됩니다.
-- 다음 세션에서는 catalog lookup을 먼저 시도하고, 적합한 saved tool이 있으면 token heuristic 또는 (옵션) semantic matching으로 재사용을 우선합니다.
+- 다음 세션에서는 catalog lookup을 먼저 시도하고, 적합한 saved tool이 있으면 기본 semantic embedding matching 후 token heuristic fallback으로 재사용을 우선합니다.
 - 실행 실패 시 compact failure summary를 만들어 1회 repair retry를 수행하고, 두 번째 실패는 사용자에게 보고하고 종료합니다.
 - 세션별 compact JSONL trace를 `.agent_state/traces/<session>.jsonl` 에 기록합니다. raw chain-of-thought는 저장하지 않고 `reasoning_summary` 와 구조화된 trace event만 남깁니다.
 - Qwen 계열 모델의 `<think>...</think>` 블록은 응답에서 제거합니다.
@@ -65,7 +65,7 @@
 
 - 실제 품질은 사용하는 LLM의 JSON/action 준수 능력과 코드 생성 품질에 영향을 받습니다.
 - sandbox는 Python 실행과 파일 쓰기 제한 중심이며, OS/container 수준 격리는 아닙니다.
-- 저장 도구 matching은 기본적으로 휴리스틱이며, `AGENT_EMBEDDING_MODEL` 설정 시 OpenAI-compatible `/v1/embeddings` 호출로 semantic matching을 보조로 사용합니다.
+- 저장 도구 matching은 기본적으로 OpenAI-compatible `/v1/embeddings` 호출 기반 semantic matching을 먼저 시도하며, 실패하거나 적합한 후보가 없으면 token heuristic으로 fallback합니다. `AGENT_EMBEDDING_MODEL` 로 기본 embedding model을 override할 수 있습니다.
 - 시스템 프롬프트는 audit/checklist/scaffold 같은 구조화된 작업도 generated tool로 처리하도록 지시하지만, 모델에 따라 builtin read 후 직접 답변으로 끝낼 수 있습니다. trace의 action 시퀀스로 확인할 수 있습니다.
 - 사용자가 명시한 파일이 존재하지 않을 때 프롬프트는 `ask_user` 또는 부재 명시 답변을 강제하지만, 모델이 인접 파일로 대체하는 경우가 드물게 발생할 수 있습니다. tool observation의 `file not found` 메시지로 확인할 수 있습니다.
 - 향후에는 더 강한 실행 격리, tool 입출력 schema 검증, 모델별 prompt 튜닝, 실패 케이스별 repair 전략을 확장할 수 있습니다.

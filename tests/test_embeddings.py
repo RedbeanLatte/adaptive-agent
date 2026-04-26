@@ -21,7 +21,7 @@ def _mock_response(*, status=200, embedding=None):
     return resp
 
 
-def test_embedding_config_is_disabled_without_model(monkeypatch, tmp_path):
+def test_embedding_config_uses_default_model_without_env(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("AGENT_EMBEDDING_MODEL", raising=False)
     monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
@@ -30,8 +30,8 @@ def test_embedding_config_is_disabled_without_model(monkeypatch, tmp_path):
 
     cfg = EmbeddingConfig.from_env()
 
-    assert cfg.model == ""
-    assert cfg.enabled is False
+    assert cfg.model == "nomic-embed-text"
+    assert cfg.enabled is True
     assert cfg.base_url == "https://ollama-wsl.tail71f338.ts.net:8443"
 
 
@@ -57,11 +57,24 @@ def test_embedding_config_ignores_env_file(monkeypatch, tmp_path):
 
     cfg = EmbeddingConfig.from_env()
 
-    assert cfg.model == ""
-    assert cfg.enabled is False
+    assert cfg.model == "nomic-embed-text"
+    assert cfg.enabled is True
     assert cfg.base_url == "https://ollama-wsl.tail71f338.ts.net:8443"
     assert cfg.token is None
     assert cfg.timeout == 120.0
+
+
+def test_embedding_config_model_env_overrides_default(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("AGENT_EMBEDDING_MODEL", "embed-test")
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    monkeypatch.delenv("AGENT_HTTP_TIMEOUT", raising=False)
+
+    cfg = EmbeddingConfig.from_env()
+
+    assert cfg.model == "embed-test"
+    assert cfg.enabled is True
 
 
 def test_embed_posts_to_openai_compatible_embeddings_endpoint(monkeypatch):

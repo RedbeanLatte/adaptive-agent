@@ -999,6 +999,23 @@ def test_build_runtime_wires_embedding_client_when_configured(monkeypatch, tmp_p
     assert rt.catalog._embedding_client.model == "embed-test"
 
 
+def test_build_runtime_wires_default_embedding_client(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("AGENT_EMBEDDING_MODEL", raising=False)
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    rt = _build_runtime(
+        session_id="embed-default",
+        llm=ScriptedLLM([_A({"action_type": "answer", "final_answer": "done"})]),
+        approval_fn=lambda question: False,
+        user_input_fn=lambda prompt: "",
+    )
+
+    assert rt.catalog._embedding_client is not None
+    assert rt.catalog._embedding_client.model == "nomic-embed-text"
+
+
 def test_run_one_shot_returns_zero_on_success(monkeypatch):
     class FakeRuntime:
         def run_task(self, task: str):
